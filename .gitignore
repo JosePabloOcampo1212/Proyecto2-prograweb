@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.log
+*.swp
+.DS_Store
+launchSettings.local.json
