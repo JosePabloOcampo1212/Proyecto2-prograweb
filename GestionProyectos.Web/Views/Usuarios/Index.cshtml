@@ -1,0 +1,67 @@
+@model List<UsuarioItem>
+@{
+    ViewData["Title"] = "Equipo";
+    var activos = Model.Count(u => u.Activo);
+}
+
+<header class="encabezado">
+    <div>
+        <div class="antetitulo">Administración</div>
+        <h1 class="titulo">Equipo</h1>
+        <p class="subtitulo">
+            <span class="mono">@activos</span> personas activas de <span class="mono">@Model.Count</span> registradas
+        </p>
+    </div>
+    <div class="acciones">
+        <a asp-action="Crear" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            Nuevo usuario
+        </a>
+    </div>
+</header>
+
+<div class="panel">
+    <div class="tabla-envoltura">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Persona</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Miembro desde</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr class="@(usuario.Activo ? "" : "fila--inactiva")">
+                        <td>
+                            <span class="persona">
+                                <span class="avatar avatar--lg avatar--@UiHelpers.TonoAvatar(usuario.Nombre)">@UiHelpers.Iniciales(usuario.Nombre)</span>
+                                <span>
+                                    <span class="tabla__principal d-block">@usuario.Nombre</span>
+                                    <span class="tabla__secundario d-block">@usuario.Email</span>
+                                </span>
+                            </span>
+                        </td>
+                        <td><span class="rol @(usuario.Rol == SesionKeys.RolAdministrador ? "rol--admin" : "")">@usuario.Rol</span></td>
+                        <td><span class="estado @(usuario.Activo ? "estado--activo" : "estado--neutro")">@(usuario.Activo ? "Activo" : "Inactivo")</span></td>
+                        <td class="fecha texto-gris">@UiHelpers.FechaCorta(usuario.FechaRegistro)</td>
+                        <td class="tabla__acciones">
+                            <a asp-action="Editar" asp-route-id="@usuario.Id" class="btn btn-sm btn-secundario">Editar</a>
+                            @if (usuario.Activo)
+                            {
+                                <form asp-action="Desactivar" asp-route-id="@usuario.Id" method="post" class="d-inline"
+                                      data-nombre="@usuario.Nombre"
+                                      onsubmit="return confirm('¿Desactivar a ' + this.dataset.nombre + '? Ya no podrá iniciar sesión.');">
+                                    <button type="submit" class="btn btn-sm btn-peligro">Desactivar</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

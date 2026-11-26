@@ -1,0 +1,12 @@
+@model UsuarioFormViewModel
+@{
+    ViewData["Title"] = "Editar usuario";
+}
+<header class="encabezado">
+    <div>
+        <div class="antetitulo"><a asp-action="Index">Equipo</a></div>
+        <h1 class="titulo">Editar <em>usuario</em></h1>
+        <p class="subtitulo">@Model.Nombre</p>
+    </div>
+</header>
+<partial name="_Formulario" model="Model" />

@@ -1,0 +1,12 @@
+@model UsuarioFormViewModel
+@{
+    ViewData["Title"] = "Nuevo usuario";
+}
+<header class="encabezado">
+    <div>
+        <div class="antetitulo"><a asp-action="Index">Equipo</a></div>
+        <h1 class="titulo">Nuevo <em>usuario</em></h1>
+        <p class="subtitulo">Dele acceso a una persona más del equipo.</p>
+    </div>
+</header>
+<partial name="_Formulario" model="Model" />

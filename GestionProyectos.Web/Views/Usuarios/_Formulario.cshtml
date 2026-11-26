@@ -1,0 +1,56 @@
+@model UsuarioFormViewModel
+<form asp-action="@(Model.Id == 0 ? "Crear" : "Editar")" method="post" class="formulario">
+    <input type="hidden" asp-for="Id" />
+    <div class="panel panel__cuerpo">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="separador">Datos personales</div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Nombre" class="form-label"></label>
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre y apellido" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="nombre@empresa.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="separador mt-2">Acceso</div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Contrasena" class="form-label"></label>
+                <input asp-for="Contrasena" class="form-control" autocomplete="new-password" />
+                <div class="form-text">
+                    Mínimo 8 caracteres, con una mayúscula, una minúscula y un número.
+                    @if (Model.Id != 0)
+                    {
+                        <span>Déjela vacía para no cambiarla.</span>
+                    }
+                </div>
+                <span asp-validation-for="Contrasena" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="IdRol" class="form-label"></label>
+                <select asp-for="IdRol" class="form-select" asp-items="@(new SelectList(Model.Roles, "Id", "Nombre"))">
+                    <option value="0">Seleccione...</option>
+                </select>
+                <span asp-validation-for="IdRol" class="text-danger"></span>
+            </div>
+        </div>
+
+        <label class="interruptor form-switch" for="@Html.IdFor(m => m.Activo)">
+            <span>
+                <span class="d-block fw-semibold">Cuenta activa</span>
+                <span class="form-text">Si la desactiva, la persona no podrá iniciar sesión.</span>
+            </span>
+            <input asp-for="Activo" class="form-check-input" role="switch" />
+        </label>
+    </div>
+    <div class="form-pie">
+        <button type="submit" class="btn btn-primary">Guardar usuario</button>
+        <a asp-action="Index" class="btn btn-fantasma">Cancelar</a>
+    </div>
+</form>

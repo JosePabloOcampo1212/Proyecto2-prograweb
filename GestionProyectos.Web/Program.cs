@@ -24,7 +24,9 @@ builder.Services
     .AddHttpMessageHandler<TokenHandler>();
 
 builder.Services.AddScoped<AuthApi>();
+builder.Services.AddScoped<UsuariosApi>();
 builder.Services.AddScoped<DashboardApi>();
+builder.Services.AddScoped<CatalogosApi>();
 
 var app = builder.Build();
 
