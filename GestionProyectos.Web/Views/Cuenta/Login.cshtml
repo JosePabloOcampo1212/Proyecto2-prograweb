@@ -1,0 +1,67 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+<div class="acceso">
+    <section class="acceso__arte">
+        <div class="marca">
+            <span class="marca__sello">b</span>
+            <span class="marca__nombre">Bitácora<small>Gestión de proyectos</small></span>
+        </div>
+
+        <div class="acceso__tablero" aria-hidden="true">
+            <div class="acceso__columna">
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha acceso__ficha--acento"></div>
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha"></div>
+            </div>
+            <div class="acceso__columna">
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha"></div>
+            </div>
+            <div class="acceso__columna">
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha acceso__ficha--acento"></div>
+                <div class="acceso__ficha"></div>
+                <div class="acceso__ficha"></div>
+            </div>
+        </div>
+
+        <h1 class="acceso__frase">Cada proyecto, <em>tarea</em> por tarea.</h1>
+        <div class="acceso__nota">Proyectos · Tareas · Equipo</div>
+    </section>
+
+    <section class="acceso__formulario">
+        <div class="acceso__caja">
+            <div class="antetitulo">Bienvenido de nuevo</div>
+            <h2 class="titulo">Iniciar sesión</h2>
+            <p class="subtitulo">Ingrese con su correo para continuar con su trabajo.</p>
+
+            @if (TempData["Error"] is string error)
+            {
+                <div class="aviso aviso--error" role="alert">@error</div>
+            }
+
+            <form asp-action="Login" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="nombre@empresa.com" autofocus />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Contrasena" class="form-label"></label>
+                    <input asp-for="Contrasena" class="form-control" placeholder="••••••••" />
+                    <span asp-validation-for="Contrasena" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Entrar
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </button>
+            </form>
+        </div>
+    </section>
+</div>

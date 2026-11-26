@@ -1,0 +1,81 @@
+@model IndicadoresItem
+@{
+    ViewData["Title"] = "Resumen";
+    var nombre = Context.Session.GetString(SesionKeys.Nombre) ?? "";
+    var primerNombre = nombre.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? nombre;
+    var hora = DateTime.Now.Hour;
+    var saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
+    var totalTareas = Model.TareasPorEstado.Sum(c => c.Cantidad);
+    var completadas = Model.TareasPorEstado.Where(c => c.Estado == "Completada").Sum(c => c.Cantidad);
+    var avance = totalTareas == 0 ? 0 : (int)Math.Round(completadas * 100.0 / totalTareas);
+    var fecha = DateTime.Today.ToString("dddd d 'de' MMMM", new System.Globalization.CultureInfo("es-ES"));
+    string Fondo(string estado) => UiHelpers.ClaseEstado(estado).Replace("estado--", "fondo--");
+}
+
+<header class="encabezado">
+    <div>
+        <div class="antetitulo">@fecha</div>
+        <h1 class="titulo">@saludo, <em>@primerNombre</em>.</h1>
+        <p class="subtitulo">Así va el trabajo del equipo hoy.</p>
+    </div>
+    <div class="acciones">
+        <a asp-controller="Proyectos" asp-action="Index" class="btn btn-primary">
+            Ver proyectos
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+    </div>
+</header>
+
+<section class="indicadores">
+    <a asp-controller="Proyectos" asp-action="Index" class="panel indicador indicador--oscuro">
+        <div class="indicador__etiqueta">Proyectos activos</div>
+        <div class="indicador__valor">@Model.ProyectosActivos</div>
+        <div class="indicador__nota">en curso ahora mismo</div>
+    </a>
+    <div class="panel indicador indicador--acento">
+        <div class="indicador__etiqueta">Asignadas a mí</div>
+        <div class="indicador__valor">@Model.TareasAsignadasAMi</div>
+        <div class="indicador__nota">tareas con su nombre</div>
+    </div>
+    <div class="panel indicador">
+        <div class="indicador__etiqueta">Avance general</div>
+        <div class="indicador__valor">@avance<span style="font-size:.45em">%</span></div>
+        <div class="indicador__nota">@completadas de @totalTareas tareas completadas</div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel__cabecera">
+        <h2 class="panel__titulo">Tareas por estado</h2>
+        <span class="mono texto-gris">@totalTareas en total</span>
+    </div>
+    <div class="panel__cuerpo">
+        @if (totalTareas == 0)
+        {
+            <div class="vacio" style="padding:24px">
+                <h3 class="vacio__titulo">Todavía no hay tareas</h3>
+                <p>Cuando el equipo cree tareas, aquí verá cómo se reparten.</p>
+            </div>
+        }
+        else
+        {
+            <div class="barra-apilada" role="img" aria-label="Distribución de tareas por estado">
+                @foreach (var conteo in Model.TareasPorEstado.Where(c => c.Cantidad > 0))
+                {
+                    <span class="@Fondo(conteo.Estado)" style="width:@((conteo.Cantidad * 100.0 / totalTareas).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%" title="@conteo.Estado: @conteo.Cantidad"></span>
+                }
+            </div>
+            <ul class="distribucion">
+                @foreach (var conteo in Model.TareasPorEstado)
+                {
+                    <li>
+                        <span class="distribucion__punto @Fondo(conteo.Estado)"></span>
+                        <span>@conteo.Estado</span>
+                        <span class="distribucion__cantidad">@conteo.Cantidad</span>
+                        <span class="distribucion__porcentaje">@((int)Math.Round(conteo.Cantidad * 100.0 / totalTareas))%</span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</section>

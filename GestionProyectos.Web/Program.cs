@@ -23,6 +23,9 @@ builder.Services
     .AddHttpClient<ApiClient>(cliente => cliente.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!))
     .AddHttpMessageHandler<TokenHandler>();
 
+builder.Services.AddScoped<AuthApi>();
+builder.Services.AddScoped<DashboardApi>();
+
 var app = builder.Build();
 
 app.UseStaticFiles();

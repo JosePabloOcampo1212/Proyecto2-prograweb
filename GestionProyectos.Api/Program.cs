@@ -28,6 +28,7 @@ builder.Services.AddDbContext<GestionDbContext>(opciones =>
 
 builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddSingleton<TokenService>();
+builder.Services.AddScoped<AccesoService>();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
