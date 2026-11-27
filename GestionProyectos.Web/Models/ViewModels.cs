@@ -78,3 +78,79 @@ public class ProyectoFormViewModel
 
     public List<CatalogoItem> Responsables { get; set; } = new();
 }
+
+public class TareaFormViewModel
+{
+    public int IdProyecto { get; set; }
+
+    public string NombreProyecto { get; set; } = "";
+
+    [Required(ErrorMessage = "El título es obligatorio.")]
+    [StringLength(150, ErrorMessage = "El título no puede superar los 150 caracteres.")]
+    [Display(Name = "Título")]
+    public string Titulo { get; set; } = "";
+
+    [StringLength(1000, ErrorMessage = "La descripción no puede superar los 1000 caracteres.")]
+    [Display(Name = "Descripción")]
+    public string? Descripcion { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar el usuario asignado.")]
+    [Display(Name = "Asignado a")]
+    public int IdAsignado { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un estado.")]
+    [Display(Name = "Estado")]
+    public int IdEstado { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar una prioridad.")]
+    [Display(Name = "Prioridad")]
+    public int IdPrioridad { get; set; }
+
+    [Required(ErrorMessage = "La fecha de vencimiento es obligatoria.")]
+    [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [Display(Name = "Fecha de vencimiento")]
+    public DateOnly? FechaVencimiento { get; set; }
+
+    public List<CatalogoItem> Usuarios { get; set; } = new();
+
+    public List<CatalogoItem> Estados { get; set; } = new();
+
+    public List<CatalogoItem> Prioridades { get; set; } = new();
+}
+
+public class TareaEditarViewModel
+{
+    public int Id { get; set; }
+
+    public int IdProyecto { get; set; }
+
+    public string NombreProyecto { get; set; } = "";
+
+    public string Titulo { get; set; } = "";
+
+    public string? Descripcion { get; set; }
+
+    public string Asignado { get; set; } = "";
+
+    public DateOnly FechaVencimiento { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un estado.")]
+    [Display(Name = "Estado")]
+    public int IdEstado { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar una prioridad.")]
+    [Display(Name = "Prioridad")]
+    public int IdPrioridad { get; set; }
+
+    public List<CatalogoItem> Estados { get; set; } = new();
+
+    public List<CatalogoItem> Prioridades { get; set; } = new();
+}
+
+public class TareasIndexViewModel
+{
+    public ProyectoItem Proyecto { get; set; } = null!;
+
+    public List<TareaItem> Tareas { get; set; } = new();
+}

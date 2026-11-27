@@ -20,6 +20,20 @@ public record ProyectoItem(
     string Responsable,
     DateTime FechaCreacion);
 
+public record TareaItem(
+    int Id,
+    int IdProyecto,
+    string Titulo,
+    string? Descripcion,
+    int IdAsignado,
+    string Asignado,
+    int IdEstado,
+    string Estado,
+    int IdPrioridad,
+    string Prioridad,
+    DateTime FechaCreacion,
+    DateOnly FechaVencimiento);
+
 public record ConteoEstadoItem(string Estado, int Cantidad);
 
 public record IndicadoresItem(int ProyectosActivos, List<ConteoEstadoItem> TareasPorEstado, int TareasAsignadasAMi);
@@ -35,3 +49,12 @@ public record ProyectoGuardar(
     DateOnly FechaFinEstimada,
     int IdEstado,
     int IdResponsable);
+
+public record TareaGuardar(
+    int IdProyecto,
+    string Titulo,
+    string? Descripcion,
+    int IdAsignado,
+    int IdEstado,
+    int IdPrioridad,
+    DateOnly FechaVencimiento);

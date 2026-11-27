@@ -1,0 +1,104 @@
+@model TareasIndexViewModel
+@{
+    ViewData["Title"] = "Tareas de " + Model.Proyecto.Nombre;
+    var esAdministrador = Context.Session.EsAdministrador();
+    var idUsuario = Context.Session.IdUsuario();
+    var porEstado = Model.Tareas.GroupBy(t => t.Estado).Select(g => new { Estado = g.Key, Cantidad = g.Count() });
+    var vencidas = Model.Tareas.Count(t => UiHelpers.EstaVencida(t.FechaVencimiento, t.Estado));
+}
+
+<header class="encabezado">
+    <div>
+        <div class="antetitulo">
+            <a asp-controller="Proyectos" asp-action="Index">Proyectos</a>&nbsp;/&nbsp;<a asp-controller="Proyectos" asp-action="Detalle" asp-route-id="@Model.Proyecto.Id">@Model.Proyecto.Nombre</a>
+        </div>
+        <h1 class="titulo">Tareas</h1>
+        <p class="subtitulo">
+            <span class="mono">@Model.Tareas.Count</span> tareas en este proyecto
+            @if (vencidas > 0)
+            {
+                <span> · <span class="mono" style="color:var(--rojo)">@vencidas</span> vencidas</span>
+            }
+        </p>
+    </div>
+    <div class="acciones">
+        <a asp-action="Crear" asp-route-idProyecto="@Model.Proyecto.Id" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+            Nueva tarea
+        </a>
+    </div>
+</header>
+
+@if (Model.Tareas.Count > 0)
+{
+    <div class="resumen">
+        @foreach (var grupo in porEstado)
+        {
+            <span class="estado @UiHelpers.ClaseEstado(grupo.Estado)">@grupo.Estado <b>@grupo.Cantidad</b></span>
+        }
+    </div>
+}
+
+<div class="panel">
+    @if (Model.Tareas.Count == 0)
+    {
+        <div class="vacio">
+            <div class="vacio__icono">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M8.5 12l2.5 2.5 4.5-5" /></svg>
+            </div>
+            <h2 class="vacio__titulo">Sin tareas por ahora</h2>
+            <p>Divida el proyecto en pasos concretos y asígnelos al equipo.</p>
+            <a asp-action="Crear" asp-route-idProyecto="@Model.Proyecto.Id" class="btn btn-primary">Crear la primera tarea</a>
+        </div>
+    }
+    else
+    {
+        <div class="tabla-envoltura">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Tarea</th>
+                        <th>Asignado</th>
+                        <th>Estado</th>
+                        <th>Prioridad</th>
+                        <th>Vence</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tarea in Model.Tareas)
+                    {
+                        var vencida = UiHelpers.EstaVencida(tarea.FechaVencimiento, tarea.Estado);
+                        var clasePrioridad = UiHelpers.ClasePrioridad(tarea.Prioridad);
+                        <tr class="@clasePrioridad.Replace("prioridad--", "fila--")">
+                            <td>
+                                <div class="tabla__principal">@tarea.Titulo</div>
+                                @if (!string.IsNullOrWhiteSpace(tarea.Descripcion))
+                                {
+                                    <div class="tabla__secundario">@tarea.Descripcion</div>
+                                }
+                            </td>
+                            <td>
+                                <span class="persona">
+                                    <span class="avatar avatar--@UiHelpers.TonoAvatar(tarea.Asignado)">@UiHelpers.Iniciales(tarea.Asignado)</span>
+                                    @tarea.Asignado
+                                </span>
+                            </td>
+                            <td><span class="estado @UiHelpers.ClaseEstado(tarea.Estado)">@tarea.Estado</span></td>
+                            <td>
+                                <span class="prioridad @clasePrioridad"><i><b></b><b></b><b></b></i>@tarea.Prioridad</span>
+                            </td>
+                            <td><span class="fecha @(vencida ? "fecha--vencida" : "")">@UiHelpers.FechaCorta(tarea.FechaVencimiento)</span></td>
+                            <td class="tabla__acciones">
+                                @if (esAdministrador || tarea.IdAsignado == idUsuario)
+                                {
+                                    <a asp-action="Editar" asp-route-id="@tarea.Id" class="btn btn-sm btn-secundario">Actualizar</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

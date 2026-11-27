@@ -1,0 +1,66 @@
+@model TareaEditarViewModel
+@{
+    ViewData["Title"] = "Actualizar tarea";
+}
+<header class="encabezado">
+    <div>
+        <div class="antetitulo"><a asp-action="Index" asp-route-idProyecto="@Model.IdProyecto">@Model.NombreProyecto</a></div>
+        <h1 class="titulo">@Model.Titulo</h1>
+        <p class="subtitulo">Actualice el estado y la prioridad de la tarea.</p>
+    </div>
+</header>
+
+<div class="formulario">
+    <div class="panel panel__cuerpo mb-4">
+        <div class="separador">Descripción</div>
+        @if (string.IsNullOrWhiteSpace(Model.Descripcion))
+        {
+            <p class="descripcion descripcion--vacia" style="font-size:1.2rem">Sin descripción.</p>
+        }
+        else
+        {
+            <p class="descripcion" style="font-size:1.2rem">@Model.Descripcion</p>
+        }
+        <ul class="datos mt-3">
+            <li>
+                <span class="datos__etiqueta">Asignado a</span>
+                <span class="persona">
+                    <span class="avatar avatar--@UiHelpers.TonoAvatar(Model.Asignado)">@UiHelpers.Iniciales(Model.Asignado)</span>
+                    @Model.Asignado
+                </span>
+            </li>
+            <li>
+                <span class="datos__etiqueta">Vencimiento</span>
+                <span class="fecha">@UiHelpers.FechaCorta(Model.FechaVencimiento)</span>
+            </li>
+        </ul>
+    </div>
+
+    <form asp-action="Editar" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="panel panel__cuerpo">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="separador">Seguimiento</div>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label asp-for="IdEstado" class="form-label"></label>
+                    <select asp-for="IdEstado" class="form-select" asp-items="@(new SelectList(Model.Estados, "Id", "Nombre"))">
+                        <option value="0">Seleccione...</option>
+                    </select>
+                    <span asp-validation-for="IdEstado" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label asp-for="IdPrioridad" class="form-label"></label>
+                    <select asp-for="IdPrioridad" class="form-select" asp-items="@(new SelectList(Model.Prioridades, "Id", "Nombre"))">
+                        <option value="0">Seleccione...</option>
+                    </select>
+                    <span asp-validation-for="IdPrioridad" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-pie">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <a asp-action="Index" asp-route-idProyecto="@Model.IdProyecto" class="btn btn-fantasma">Cancelar</a>
+        </div>
+    </form>
+</div>
