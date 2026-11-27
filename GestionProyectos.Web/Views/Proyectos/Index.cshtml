@@ -1,0 +1,89 @@
+@model List<ProyectoItem>
+@{
+    ViewData["Title"] = "Proyectos";
+    var esAdministrador = Context.Session.EsAdministrador();
+    var activos = Model.Count(p => p.Estado == "Activo");
+}
+
+<header class="encabezado">
+    <div>
+        <div class="antetitulo">Portafolio</div>
+        <h1 class="titulo">Proyectos</h1>
+        <p class="subtitulo">
+            <span class="mono">@Model.Count</span> en total · <span class="mono">@activos</span> activos
+        </p>
+    </div>
+    @if (esAdministrador)
+    {
+        <div class="acciones">
+            <a asp-action="Crear" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14" /></svg>
+                Nuevo proyecto
+            </a>
+        </div>
+    }
+</header>
+
+<div class="panel">
+    @if (Model.Count == 0)
+    {
+        <div class="vacio">
+            <div class="vacio__icono">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+            </div>
+            <h2 class="vacio__titulo">Aún no hay proyectos</h2>
+            <p>Los proyectos que se creen aparecerán aquí.</p>
+            @if (esAdministrador)
+            {
+                <a asp-action="Crear" class="btn btn-primary">Crear el primero</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="tabla-envoltura">
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Proyecto</th>
+                        <th>Estado</th>
+                        <th>Responsable</th>
+                        <th>Periodo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var proyecto in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-action="Detalle" asp-route-id="@proyecto.Id" class="tabla__principal">@proyecto.Nombre</a>
+                                @if (!string.IsNullOrWhiteSpace(proyecto.Descripcion))
+                                {
+                                    <div class="tabla__secundario">@proyecto.Descripcion</div>
+                                }
+                            </td>
+                            <td><span class="estado @UiHelpers.ClaseEstado(proyecto.Estado)">@proyecto.Estado</span></td>
+                            <td>
+                                <span class="persona">
+                                    <span class="avatar avatar--@UiHelpers.TonoAvatar(proyecto.Responsable)">@UiHelpers.Iniciales(proyecto.Responsable)</span>
+                                    @proyecto.Responsable
+                                </span>
+                            </td>
+                            <td class="fecha texto-gris">
+                                @UiHelpers.FechaCorta(proyecto.FechaInicio) → @UiHelpers.FechaCorta(proyecto.FechaFinEstimada)
+                            </td>
+                            <td class="tabla__acciones">
+                                <a asp-controller="Tareas" asp-action="Index" asp-route-idProyecto="@proyecto.Id" class="btn btn-sm btn-secundario">Tareas</a>
+                                @if (esAdministrador)
+                                {
+                                    <a asp-action="Editar" asp-route-id="@proyecto.Id" class="btn btn-sm btn-fantasma">Editar</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,85 @@
+@model ProyectoItem
+@{
+    ViewData["Title"] = Model.Nombre;
+    var hoy = DateOnly.FromDateTime(DateTime.Today);
+    var diasTotales = Math.Max(1, Model.FechaFinEstimada.DayNumber - Model.FechaInicio.DayNumber);
+    var diasTranscurridos = Math.Clamp(hoy.DayNumber - Model.FechaInicio.DayNumber, 0, diasTotales);
+    var porcentaje = diasTranscurridos * 100.0 / diasTotales;
+    var diasRestantes = Model.FechaFinEstimada.DayNumber - hoy.DayNumber;
+    var textoPlazo = hoy < Model.FechaInicio
+        ? $"Comienza en {Model.FechaInicio.DayNumber - hoy.DayNumber} días"
+        : diasRestantes > 0
+            ? $"Quedan {diasRestantes} días de {diasTotales}"
+            : diasRestantes == 0 ? "La fecha estimada de fin es hoy" : $"Pasaron {-diasRestantes} días de la fecha estimada";
+    var porcentajeCss = porcentaje.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}
+
+<header class="encabezado">
+    <div>
+        <div class="antetitulo"><a asp-action="Index">Proyectos</a></div>
+        <h1 class="titulo">@Model.Nombre</h1>
+        <p class="subtitulo"><span class="estado @UiHelpers.ClaseEstado(Model.Estado)">@Model.Estado</span></p>
+    </div>
+    <div class="acciones">
+        @if (Context.Session.EsAdministrador())
+        {
+            <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-secundario">Editar</a>
+        }
+        <a asp-controller="Tareas" asp-action="Index" asp-route-idProyecto="@Model.Id" class="btn btn-primary">
+            Ver tareas
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </a>
+    </div>
+</header>
+
+<div class="ficha">
+    <section class="panel panel__cuerpo">
+        <div class="separador">Descripción</div>
+        @if (string.IsNullOrWhiteSpace(Model.Descripcion))
+        {
+            <p class="descripcion descripcion--vacia">Este proyecto todavía no tiene descripción.</p>
+        }
+        else
+        {
+            <p class="descripcion">@Model.Descripcion</p>
+        }
+
+        <div class="cronograma">
+            <div class="separador">Cronograma</div>
+            <div class="cronograma__extremos">
+                <span>@UiHelpers.FechaCorta(Model.FechaInicio)</span>
+                <span>@UiHelpers.FechaCorta(Model.FechaFinEstimada)</span>
+            </div>
+            <div class="cronograma__pista">
+                <div class="cronograma__avance" style="width:@porcentajeCss%"></div>
+                <span class="cronograma__hoy" style="left:@porcentajeCss%" title="Hoy"></span>
+            </div>
+            <div class="cronograma__texto">@textoPlazo</div>
+        </div>
+    </section>
+
+    <aside class="panel panel__cuerpo">
+        <div class="separador">Datos</div>
+        <ul class="datos">
+            <li>
+                <span class="datos__etiqueta">Responsable</span>
+                <span class="persona">
+                    <span class="avatar avatar--@UiHelpers.TonoAvatar(Model.Responsable)">@UiHelpers.Iniciales(Model.Responsable)</span>
+                    @Model.Responsable
+                </span>
+            </li>
+            <li>
+                <span class="datos__etiqueta">Inicio</span>
+                <span class="fecha">@UiHelpers.FechaCorta(Model.FechaInicio)</span>
+            </li>
+            <li>
+                <span class="datos__etiqueta">Fin estimado</span>
+                <span class="fecha">@UiHelpers.FechaCorta(Model.FechaFinEstimada)</span>
+            </li>
+            <li>
+                <span class="datos__etiqueta">Creado</span>
+                <span class="fecha texto-gris">@UiHelpers.FechaCorta(Model.FechaCreacion) · @Model.FechaCreacion.ToString("HH:mm")</span>
+            </li>
+        </ul>
+    </aside>
+</div>

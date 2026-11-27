@@ -1,0 +1,12 @@
+@model ProyectoFormViewModel
+@{
+    ViewData["Title"] = "Nuevo proyecto";
+}
+<header class="encabezado">
+    <div>
+        <div class="antetitulo"><a asp-action="Index">Proyectos</a></div>
+        <h1 class="titulo">Nuevo <em>proyecto</em></h1>
+        <p class="subtitulo">Defina el alcance, las fechas y quién lo lidera.</p>
+    </div>
+</header>
+<partial name="_Formulario" model="Model" />

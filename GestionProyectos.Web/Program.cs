@@ -25,6 +25,7 @@ builder.Services
 
 builder.Services.AddScoped<AuthApi>();
 builder.Services.AddScoped<UsuariosApi>();
+builder.Services.AddScoped<ProyectosApi>();
 builder.Services.AddScoped<DashboardApi>();
 builder.Services.AddScoped<CatalogosApi>();
 
